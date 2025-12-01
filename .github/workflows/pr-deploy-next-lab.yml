@@ -1,4 +1,4 @@
-name: PR deploy next lab
+name: PR deploy next
 
 on:
   pull_request_target:
@@ -14,29 +14,18 @@ jobs:
   deploy:
     if: ${{ github.repository_owner == 'exe-cut3' && github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout attacker code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           fetch-depth: 0
-
       - uses: ./.github/actions/setup-node
-
-      - name: Build (runs attacker's code)
-        run: |
-          echo "=== BUILD STEP START ==="
-          yarn run build
-          echo "=== BUILD STEP END ==="
-
-      - name: Fake deploy (uses secret, как Firebase step)
-        run: |
-          if [ -n "${{ secrets.LAB_FIREBASE_SERVICE_ACCOUNT }}" ]; then
-            echo "Deploy: LAB_FIREBASE_SERVICE_ACCOUNT is available (length: ${#LAB_FIREBASE_SERVICE_ACCOUNT})"
-          else
-            echo "Deploy: LAB_FIREBASE_SERVICE_ACCOUNT is NOT available"
-          fi
-        env:
-          LAB_FIREBASE_SERVICE_ACCOUNT: ${{ secrets.LAB_FIREBASE_SERVICE_ACCOUNT }}
+      - run: yarn run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          firebaseServiceAccount: ${{ secrets.LAB_FIREBASE_SERVICE_ACCOUNT }}
+          firebaseToolsVersion: ^13.35.1
+          expires: 5d
+          target: next
+          channelId: data-grid-pr-${{ github.event.number }}
