@@ -1,0 +1,35 @@
+name: E2E approve snapshots
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  approve_snapshots:
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/approve-snapshots') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: xt0rted/pull-request-comment-branch@v2
+        id: comment-branch
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.comment-branch.outputs.head_ref }}
+
+      - uses: ./.github/actions/setup-node
+
+      - name: E2E setup
+        run: yarn run e2e:setup
+
+      - name: E2E update snapshots
+        run: yarn run e2e:dev-ag-grid-angular --update-snapshots
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        id: commit-and-push
+        with:
+          commit_message: 'test: updated e2e snapshots'
+          file_pattern: '**/*.png'
