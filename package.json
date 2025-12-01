@@ -1,0 +1,8 @@
+{
+  "name": "actions-lab",
+  "version": "1.0.0",
+  "scripts": {
+    "e2e:setup": "echo E2E SETUP",
+    "e2e:dev-ag-grid-angular": "echo E2E RUN $1"
+  }
+}
