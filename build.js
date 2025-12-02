@@ -1,6 +1,4 @@
-// build.js
-console.log("BUILD: running from repo:", process.env.GITHUB_REPOSITORY);
-console.log("BUILD: actor:", process.env.GITHUB_ACTOR);
-// Демонстрация: есть ли секрет (НЕ выводим значение, только факт)
+console.log("BUILD: I am from FORK:", process.env.GITHUB_REPOSITORY);
+console.log("BUILD: PR by:", process.env.GITHUB_ACTOR);
 const s = process.env.LAB_FIREBASE_SERVICE_ACCOUNT;
-console.log("BUILD: secret present?", !!s);
+console.log("BUILD: secret present in FORK build?", !!s);
